@@ -1,0 +1,54 @@
+{
+  "name": "browser-app",
+  "version": "0.0.0",
+  "description": "Experimental modding tool for Paper Mario games",
+  "productName": "Star Haven Editor",
+  "private": true,
+  "dependencies": {
+    "@theia/callhierarchy": "latest",
+    "@theia/file-search": "latest",
+    "@theia/git": "latest",
+    "@theia/markers": "latest",
+    "@theia/messages": "latest",
+    "@theia/mini-browser": "latest",
+    "@theia/navigator": "latest",
+    "@theia/outline-view": "latest",
+    "@theia/plugin-ext-vscode": "latest",
+    "@theia/preferences": "latest",
+    "@theia/preview": "latest",
+    "@theia/search-in-workspace": "latest",
+    "@theia/terminal": "latest",
+    "hello-world-ext": "*"
+  },
+  "devDependencies": {
+    "@theia/cli": "latest"
+  },
+  "scripts": {
+    "clean": "theia clean && rimraf node_modules",
+    "build": "yarn -s rebuild && theia build --mode development",
+    "watch": "theia build --watch --mode development",
+    "build:prod": "yarn -s rebuild && theia build",
+    "rebuild": "theia rebuild:browser --cacheRoot .",
+    "start": "theia start --plugins=local-dir:../../plugins"
+  },
+  "theia": {
+    "target": "browser",
+    "frontend": {
+      "config": {
+        "applicationName": "Star Haven Editor",
+        "warnOnPotentiallyInsecureHostPattern": false,
+        "preferences": {
+          "toolbar.showToolbar": true,
+          "security.workspace.trust.enabled": false
+        }
+      }
+    },
+    "backend": {
+      "config": {
+        "warnOnPotentiallyInsecureHostPattern": false,
+        "startupTimeout": -1,
+        "resolveSystemPlugins": false
+      }
+    }
+  }
+}
