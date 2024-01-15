@@ -17,7 +17,7 @@
     "build:applications": "yarn build:extensions && lerna run --scope=\"*app\" build:prod --concurrency 1",
     "build:applications:dev": "yarn build:extensions && lerna run --scope=\"*app\" build --concurrency 1",
     "build:extensions": "lerna run --scope=\"*ext\" build",
-    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false",
+    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=true",
     "package:applications": "lerna run --scope=\"*app\" package --concurrency 1",
     "package:applications:preview": "lerna run --scope=\"*app\" package:preview --concurrency 1",
     "package:applications:prod": "lerna run --scope=\"*app\" package:prod --concurrency 1",
@@ -37,7 +37,8 @@
     "vscode.python": "https://open-vsx.org/api/vscode/python/1.79.0/file/vscode.python-1.79.0.vsix",
     "vscode.markdown": "https://open-vsx.org/api/vscode/markdown/1.79.0/file/vscode.markdown-1.79.0.vsix",
     "vscode.media-preview": "https://open-vsx.org/api/vscode/media-preview/1.79.0/file/vscode.media-preview-1.79.0.vsix",
-    "vscode.git": "https://open-vsx.org/api/vscode/git/1.79.0/file/vscode.git-1.79.0.vsix"
+    "vscode.git": "https://open-vsx.org/api/vscode/git/1.79.0/file/vscode.git-1.79.0.vsix",
+    "ms-vscode.cpptools": "https://github.com/microsoft/vscode-cpptools/releases/download/v1.18.5/cpptools-osx-arm64.vsix"
   },
   "theiaPluginsExcludeIds": []
 }
