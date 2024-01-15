@@ -135,9 +135,9 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 }
 
 enum ItemType {
-	AREA,
-	MAP,
-  FILE,
+	AREA = "area",
+	MAP = "map",
+  FILE = "file",
 }
 
 class Item extends vscode.TreeItem {
@@ -149,7 +149,7 @@ class Item extends vscode.TreeItem {
     super(label, t === ItemType.FILE ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed);
     this.id = p;
 		this.path = p;
-		this.type = t;
+		this.type = this.contextValue = t;
     const basename = path.basename(p);
     if (t === ItemType.MAP) {
       this.areaShortname = basename.split("_")[0];

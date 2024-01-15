@@ -14,6 +14,23 @@
   ],
   "main": "./lib/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "pm-world.addArea",
+        "title": "New area...",
+        "icon": "$(add)"
+      },
+      {
+        "command": "pm-world.addMap",
+        "title": "New map...",
+        "icon": "$(add)"
+      },
+      {
+        "command": "pm-world.delete",
+        "title": "Delete",
+        "icon": "$(trash)"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -28,6 +45,26 @@
         {
           "id": "pm-world-areas",
           "name": "Areas"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "pm-world.addArea",
+          "when": "view == pm-world",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "pm-world.addMap",
+          "when": "view == pm-world && viewItem == area",
+          "group": "inline"
+        },
+        {
+          "command": "pm-world.delete",
+          "when": "view == pm-world"
         }
       ]
     }
