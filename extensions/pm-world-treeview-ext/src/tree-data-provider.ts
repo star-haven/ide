@@ -10,9 +10,10 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 		this.dir = path.join(workspaceRoot, 'src', 'world');
 
 		// If workspaceroot/src/world/ changes structure, refresh.
-		const watcher = vscode.workspace.createFileSystemWatcher(path.join(this.dir, '**'), false, true, false);
+		const watcher = vscode.workspace.createFileSystemWatcher(path.join(this.dir, '**'), false, false, false);
 		watcher.onDidCreate(() => this.refresh());
 		watcher.onDidDelete(() => this.refresh());
+    watcher.onDidChange(() => this.refresh());
 
     this.readWorldC();
 	}
