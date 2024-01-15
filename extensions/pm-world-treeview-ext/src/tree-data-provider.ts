@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import assert = require('assert');
 
 export class AreasProvider implements vscode.TreeDataProvider<Item> {
 	private readonly dir: string;
@@ -27,6 +28,8 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
     if (item) {
 			if (item.type === ItemType.AREA)
       	return this.getMaps(item);
+      else if (item.type === ItemType.MAP)
+        return this.getMapFiles(item);
 			else
 				return Promise.resolve([]);
     } else {
@@ -84,6 +87,13 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 			.map(({ dir, brief }) => new Item(path.join(area.path, dir), ItemType.MAP, brief));
 	}
 
+  // TODO: also get the assets for the map
+  private async getMapFiles(map: Item): Promise<Item[]> {
+    assert(map.type === ItemType.MAP);
+    const listing = await fs.promises.readdir(map.path);
+    return listing.map(file => new Item(path.join(map.path, file), ItemType.FILE, file));
+  }
+
 	private _onDidChangeTreeData: vscode.EventEmitter<Item | undefined | null | void> = new vscode.EventEmitter<Item | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<Item | undefined | null | void> = this._onDidChangeTreeData.event;
 
@@ -95,6 +105,7 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 enum ItemType {
 	AREA,
 	MAP,
+  FILE,
 }
 
 class Item extends vscode.TreeItem {
@@ -103,22 +114,26 @@ class Item extends vscode.TreeItem {
 	public readonly areaShortname: string;
 
   constructor(public readonly p: string, public readonly t: ItemType, public readonly label: string) {
-    super(label, t === ItemType.AREA ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
+    super(label, t === ItemType.FILE ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed);
 		this.path = p;
 		this.type = t;
     const basename = path.basename(p);
-    this.tooltip = basename;
     if (t === ItemType.MAP) {
       this.areaShortname = basename.split("_")[0];
+      this.tooltip = basename;
       this.iconPath = path.join(__filename, '..', '..', 'resources', 'map.svg');
+    } else if (t === ItemType.AREA) {
+      this.areaShortname = basename.split("_")[1];
+      this.tooltip = basename;
+      this.iconPath = path.join(__filename, '..', '..', 'resources', 'area.svg');
+    } else if (t === ItemType.FILE) {
+      this.areaShortname = ""; // OK because it won't be used.
+      this.iconPath = new vscode.ThemeIcon('file');
       this.command = {
         command: 'vscode.open',
         title: 'Open',
         arguments: [vscode.Uri.file(p)]
       };
-    } else if (t === ItemType.AREA) {
-      this.areaShortname = basename.split("_")[1];
-      this.iconPath = path.join(__filename, '..', '..', 'resources', 'area.svg');
     }
   }
 }
