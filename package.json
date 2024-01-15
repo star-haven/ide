@@ -11,7 +11,7 @@
     "rimraf": "latest"
   },
   "scripts": {
-    "clean": "lerna run clean && rimraf node_modules && rimraf plugins",
+    "clean": "lerna run clean && rimraf plugins",
     "build": "yarn build:extensions && yarn build:applications",
     "build:dev": "yarn build:extensions && yarn build:applications:dev",
     "build:applications": "yarn build:extensions && lerna run --scope=\"*app\" build:prod --concurrency 1",

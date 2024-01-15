@@ -1,0 +1,49 @@
+{
+  "name": "pm-world-treeview-ext",
+  "displayName": "Paper Mario world treeview",
+  "description": "Provides a sidebar view for maps in Paper Mario decompilation folders",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:src/world"
+  ],
+  "main": "./lib/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pm-world",
+          "title": "World",
+          "icon": "resources/world.svg"
+        }
+      ]
+    },
+    "views": {
+      "pm-world": [
+        {
+          "id": "pm-world-areas",
+          "name": "Areas"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build && yarn symlink",
+    "symlink": "symlink-dir . ../../plugins/pm-world-treeview-ext",
+    "clean": "rimraf lib",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "18.x",
+    "typescript": "^5.3.3",
+    "symlink-dir": "latest",
+    "rimraf": "latest"
+  }
+}

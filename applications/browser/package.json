@@ -18,7 +18,8 @@
     "@theia/preview": "latest",
     "@theia/search-in-workspace": "latest",
     "@theia/terminal": "latest",
-    "hello-world-ext": "*"
+    "hello-world-ext": "*",
+    "pm-world-treeview-ext": "*"
   },
   "devDependencies": {
     "@theia/cli": "latest"
