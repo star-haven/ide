@@ -13,6 +13,8 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 		const watcher = vscode.workspace.createFileSystemWatcher(path.join(this.dir, '**'), false, true, false);
 		watcher.onDidCreate(() => this.refresh());
 		watcher.onDidDelete(() => this.refresh());
+
+    this.readWorldC();
 	}
 
   getTreeItem(element: Item): vscode.TreeItem {
@@ -50,7 +52,7 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 		);
 		return objs
 			.filter(({ isDirectory }) => isDirectory)
-			.map(({ dir }) => new Item(path.join(worldPath, dir), ItemType.AREA, dir));
+			.map(({ dir }) => new Item(path.join(worldPath, dir), ItemType.AREA, this.areaToName.get(dir) ?? dir));
   }
 
 	private async getMaps(area: Item): Promise<Item[]> {
@@ -94,10 +96,39 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
     return listing.map(file => new Item(path.join(map.path, file), ItemType.FILE, file));
   }
 
+  private areaToName: Map<string, string> = new Map();
+  private async readWorldC() {
+    this.areaToName = new Map();
+
+    const file = path.join(this.workspaceRoot, 'src', 'world', 'world.c');
+
+    try {
+      const lines = await fs.promises.readFile(file, 'utf8').then(data => data.split("\n"));
+
+      // Search from the bottom of world.c for lines like `AREA($area, "name")` until we see the gAreas definition.
+      for (let lineNo = lines.length - 1; lineNo >= 0; lineNo--) {
+        const line = lines[lineNo];
+        const match = line.match(/AREA\((.*), "(.*)"\)/);
+        if (match) {
+          this.areaToName.set("area_" + match[1], match[2]);
+        } else if (line.includes("gAreas[] =")) {
+          break;
+        }
+      }
+    } catch (err) {
+      if (err?.code === 'ENOENT') {
+        console.warn(`Could not read ${file}`);
+      } else {
+        throw err;
+      }
+    }
+  }
+
 	private _onDidChangeTreeData: vscode.EventEmitter<Item | undefined | null | void> = new vscode.EventEmitter<Item | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<Item | undefined | null | void> = this._onDidChangeTreeData.event;
 
-  refresh(): void {
+  async refresh(): Promise<void> {
+    await this.readWorldC();
     this._onDidChangeTreeData.fire();
   }
 }
