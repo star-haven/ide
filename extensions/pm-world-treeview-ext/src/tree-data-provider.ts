@@ -47,7 +47,7 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 		);
 		return objs
 			.filter(({ isDirectory }) => isDirectory)
-			.map(({ dir }) => new Item(path.join(worldPath, dir), ItemType.AREA));
+			.map(({ dir }) => new Item(path.join(worldPath, dir), ItemType.AREA, dir));
   }
 
 	private async getMaps(area: Item): Promise<Item[]> {
@@ -58,12 +58,30 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
 				.filter(dir => dir.startsWith(area.areaShortname + "_"))
 				.map(async dir => {
 					const stat = await fs.promises.stat(path.join(area.path, dir));
-					return { dir, isDirectory: stat.isDirectory() };
+
+          // If there is a header file for the map, read its @brief comment.
+          let brief = dir; // Default to the name of the map.
+          const headerPath = path.join(area.path, dir, dir + ".h");
+          if (await fs.promises.access(headerPath).then(() => true).catch(() => false)) {
+            const header = await fs.promises.readFile(headerPath, 'utf8');
+            const match = header.match(/@brief (.*)/);
+            if (match) {
+              brief = match[1];
+
+              // If the brief is formatted as "$Area - $Map" then just use $Map.
+              const areaMapMatch = brief.match(/(.*) - (.*)/);
+              if (areaMapMatch) {
+                brief = areaMapMatch[2];
+              }
+            }
+          }
+
+					return { dir, brief, isDirectory: stat.isDirectory() };
 				})
 		);
 		return objs
 			.filter(({ isDirectory }) => isDirectory)
-			.map(({ dir }) => new Item(path.join(area.path, dir), ItemType.MAP));
+			.map(({ dir, brief }) => new Item(path.join(area.path, dir), ItemType.MAP, brief));
 	}
 
 	private _onDidChangeTreeData: vscode.EventEmitter<Item | undefined | null | void> = new vscode.EventEmitter<Item | undefined | null | void>();
@@ -84,11 +102,12 @@ class Item extends vscode.TreeItem {
 	public readonly type: ItemType;
 	public readonly areaShortname: string;
 
-  constructor(public readonly p: string, public readonly t: ItemType) {
-		const basename = path.basename(p);
-    super(basename, t === ItemType.AREA ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
+  constructor(public readonly p: string, public readonly t: ItemType, public readonly label: string) {
+    super(label, t === ItemType.AREA ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
 		this.path = p;
 		this.type = t;
+    const basename = path.basename(p);
+    this.tooltip = basename;
     if (t === ItemType.MAP) {
       this.areaShortname = basename.split("_")[0];
       this.iconPath = path.join(__filename, '..', '..', 'resources', 'map.svg');
