@@ -147,6 +147,7 @@ class Item extends vscode.TreeItem {
 
   constructor(public readonly p: string, public readonly t: ItemType, public readonly label: string) {
     super(label, t === ItemType.FILE ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed);
+    this.id = p;
 		this.path = p;
 		this.type = t;
     const basename = path.basename(p);
