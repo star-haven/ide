@@ -17,12 +17,12 @@
     "commands": [
       {
         "command": "pm-world.addArea",
-        "title": "New area...",
+        "title": "New Area...",
         "icon": "$(add)"
       },
       {
         "command": "pm-world.addMap",
-        "title": "New map...",
+        "title": "New Map...",
         "icon": "$(add)"
       },
       {
@@ -52,19 +52,19 @@
       "view/title": [
         {
           "command": "pm-world.addArea",
-          "when": "view == pm-world",
+          "when": "view == pm-world-areas",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "pm-world.addMap",
-          "when": "view == pm-world && viewItem == area",
+          "when": "view == pm-world-areas && viewItem == area",
           "group": "inline"
         },
         {
           "command": "pm-world.delete",
-          "when": "view == pm-world"
+          "when": "view == pm-world-areas"
         }
       ]
     }

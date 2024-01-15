@@ -134,13 +134,13 @@ export class AreasProvider implements vscode.TreeDataProvider<Item> {
   }
 }
 
-enum ItemType {
+export enum ItemType {
 	AREA = "area",
 	MAP = "map",
   FILE = "file",
 }
 
-class Item extends vscode.TreeItem {
+export class Item extends vscode.TreeItem {
 	public readonly path: string;
 	public readonly type: ItemType;
 	public readonly areaShortname: string;

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { AreasProvider } from './tree-data-provider';
+import { AreasProvider, Item } from './tree-data-provider';
 
 const addArea = (rootPath: string) => async () => {
 	const areaName = await vscode.window.showInputBox({
@@ -86,11 +86,12 @@ enum {
 	// TODO
 };
 
-const addMap = (rootPath: string) => async () => {
+const addMap = (rootPath: string) => async (item?: Item) => {
 	// TODO
+	// if (!item) ask for area
 };
 
-const deleteItem = (rootPath: string) => async (item: any) => {
+const deleteItem = (rootPath: string) => async (item?: Item) => {
 	// TODO
 	console.log(item);
 };
